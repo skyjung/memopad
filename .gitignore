@@ -46,3 +46,6 @@ next-env.d.ts
 /outputs/
 /work/
 build.log
+
+# tauri
+/src-tauri/target/
