@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Archive, ArchiveRestore, ArrowLeft, Bold, BookOpen, Check, ChevronDown, FileText, FolderPlus, Italic, MoreHorizontal, Pencil, Plus, Search, ShieldCheck, Strikethrough, Trash2, Type, Underline, X } from "lucide-react";
+import { Archive, ArchiveRestore, ArrowLeft, Bold, BookOpen, Check, ChevronDown, FileText, FolderPlus, Grid3X3, Italic, List, MoreHorizontal, Pencil, Plus, Search, ShieldCheck, Strikethrough, Trash2, Type, Underline, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -47,6 +47,7 @@ export default function Home() {
   const [newFolderDialog, setNewFolderDialog] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
   const [justSaved, setJustSaved] = useState(false);
+  const [listMode, setListMode] = useState<"list" | "grid">("list");
   const loaded = useRef(false);
   const [mounted, setMounted] = useState(false);
   const titleRef = useRef<HTMLTextAreaElement>(null);
@@ -121,7 +122,7 @@ export default function Home() {
     } else {
       const ps = selected.body.split(/\n\n+/).map(p => `<p>${escape(p).replace(/\n/g, "<br>")}</p>`).join("");
       const ef = fontPref === "serif" ? "Georgia,serif" : "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
-      blob = new Blob([`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(selected.title)}</title><style>body{max-width:700px;margin:70px auto;padding:0 28px;color:#20201e;font:18px/1.85 ${ef}}h1{font-size:42px;line-height:1.1;letter-spacing:-.04em}.date{color:#999;font-size:14px;margin:0 0 32px}.mark{display:flex;align-items:center;gap:12px;margin-top:60px;padding-top:22px;border-top:1px solid #ddd;font:13px/1.4 sans-serif}.m{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;color:white;background:#BD1B2A;font:bold 18px Georgia}.mark small{display:block;color:#777}.record{margin-top:18px;color:#666;font:12px/1.6 sans-serif}</style></head><body><h1>${escape(selected.title)}</h1><p class="date">${escape(dateStr)}</p>${ps}<div class="mark"><span class="m">m</span><div><strong>Written in memopad</strong><small>Composed locally</small></div></div><div class="record">${words(selected.body)} words · ${selected.revisions} revisions · ${selected.sources.length} sources · Exported ${shortDate(Date.now())}</div></body></html>`], { type: "text/html" }); ext = "html";
+      blob = new Blob([`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(selected.title)}</title><style>body{max-width:700px;margin:70px auto;padding:0 28px;color:#20201e;font:18px/1.85 ${ef}}h1{font-size:42px;line-height:1.1;letter-spacing:-.04em}.date{color:#999;font-size:14px;margin:0 0 32px}.mark{display:flex;align-items:center;gap:12px;margin-top:60px;padding-top:22px;border-top:1px solid #ddd;font:13px/1.4 sans-serif}.m{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;color:white;background:#2458d3;font:bold 18px Georgia}.mark small{display:block;color:#777}.record{margin-top:18px;color:#666;font:12px/1.6 sans-serif}</style></head><body><h1>${escape(selected.title)}</h1><p class="date">${escape(dateStr)}</p>${ps}<div class="mark"><span class="m">m</span><div><strong>Written in memopad</strong><small>Composed locally</small></div></div><div class="record">${words(selected.body)} words · ${selected.revisions} revisions · ${selected.sources.length} sources · Exported ${shortDate(Date.now())}</div></body></html>`], { type: "text/html" }); ext = "html";
     }
     const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${selected.title.replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "").toLowerCase() || "memopad"}.${ext}`; a.click(); URL.revokeObjectURL(a.href); setPublished(true);
   };
@@ -143,6 +144,8 @@ export default function Home() {
       <div className="list-header-left"><span className="wordmark">memopad.</span></div>
       <div className="list-header-right">
         <button className="header-button" onClick={() => setShowArchive(!showArchive)}><Archive /> {showArchive ? "Notes" : "Archive"}{!showArchive && archivedNotes.length > 0 && <span className="count-badge">{archivedNotes.length}</span>}</button>
+        <button className="header-button" onClick={createFolder}><FolderPlus /> New folder</button>
+        <button className="header-button" onClick={() => setListMode(listMode === "list" ? "grid" : "list")} title={listMode === "list" ? "Card view" : "List view"}>{listMode === "list" ? <Grid3X3 /> : <List />}</button>
         <button className="header-button accent" onClick={() => createNote(folders[0] || "Essays")}><Plus /> New note</button>
       </div>
     </header>
@@ -167,7 +170,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="note-table">
+        {listMode === "list" ? <div className="note-table">
           <div className="note-table-header"><span>Title</span><span>Words</span><span>Modified</span><span></span></div>
           {filtered.filter(n => n.folder === folder).map(note => <div key={note.id} className="note-table-row" onClick={() => openNote(note.id)}>
             <span className="note-title-cell">{note.title || "Untitled"}</span>
@@ -178,15 +181,21 @@ export default function Home() {
               <button className="row-action danger" onClick={() => deleteNote(note.id)} title="Delete"><Trash2 /></button>
             </span>
           </div>)}
-        </div>
+        </div> : <div className="note-card-grid">
+          {filtered.filter(n => n.folder === folder).map(note => <div key={note.id} className="note-card" onClick={() => openNote(note.id)}>
+            <div className="note-card-title">{note.title || "Untitled"}</div>
+            <div className="note-card-preview">{note.body.slice(0, 120) || "Empty note"}{note.body.length > 120 ? "…" : ""}</div>
+            <div className="note-card-meta">{words(note.body)} words · {shortDate(note.updatedAt)}</div>
+            <div className="note-card-actions" onClick={e => e.stopPropagation()}>
+              <button className="row-action" onClick={() => toggleArchive(note.id)} title={note.archived ? "Restore" : "Archive"}>{note.archived ? <ArchiveRestore /> : <Archive />}</button>
+              <button className="row-action danger" onClick={() => deleteNote(note.id)} title="Delete"><Trash2 /></button>
+            </div>
+          </div>)}
+        </div>}
       </section>)}
 
       {filtered.length === 0 && <div className="empty-list">{query ? <><Search /><p>No notes matching &ldquo;{query}&rdquo;</p></> : <><FileText /><p>No notes yet</p><button className="header-button accent" onClick={() => createNote()}>Create your first note</button></>}</div>}
     </div>
-
-    <footer className="list-footer">
-      <button onClick={createFolder}><FolderPlus /> New folder</button>
-    </footer>
 
     {/* Dialogs */}
     <Dialog open={deleteTarget !== null} onOpenChange={o => { if (!o) setDeleteTarget(null); }}><DialogContent className="delete-dialog"><DialogHeader><div className="seal destructive"><Trash2 /></div><DialogTitle>{deleteTarget?.startsWith("folder:") ? "Delete folder" : "Delete note"}</DialogTitle><DialogDescription>{deleteTarget?.startsWith("folder:") ? `Permanently delete "${deleteTarget.split(":")[1]}" and all ${deleteTarget.split(":")[2]} note(s)?` : `Permanently delete "${notes.find(n => n.id === deleteTarget)?.title || "Untitled"}"?`}</DialogDescription></DialogHeader><DialogFooter><Button variant="ghost" onClick={() => setDeleteTarget(null)}>Cancel</Button><Button className="delete-confirm-button" onClick={() => { if (deleteTarget?.startsWith("folder:")) confirmDeleteFolder(deleteTarget.split(":")[1]); else confirmDelete(); }}><Trash2 /> Delete</Button></DialogFooter></DialogContent></Dialog>
