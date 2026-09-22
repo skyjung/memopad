@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../vendor/shadcn-tailwind-4.13.0.css";
-:root{--background:#f5f5f3;--foreground:#1d1d1b;--card:#f0f0ed;--card-foreground:#1d1d1b;--popover:#fff;--popover-foreground:#1d1d1b;--primary:#2458d3;--primary-foreground:#fff;--secondary:#eae9e6;--secondary-foreground:#292927;--muted:#eae9e6;--muted-foreground:#8a8a84;--accent:#2458d3;--accent-foreground:#fff;--destructive:#c44135;--border:#dcdcd8;--input:#d6d6d0;--ring:#2458d3;--radius:.25rem}
+:root{--background:#f5f5f3;--foreground:#161616;--card:#f0f0ed;--card-foreground:#161616;--popover:#fff;--popover-foreground:#161616;--primary:#2458d3;--primary-foreground:#fff;--secondary:#eae9e6;--secondary-foreground:#292927;--muted:#eae9e6;--muted-foreground:#8a8a84;--accent:#2458d3;--accent-foreground:#fff;--destructive:#c44135;--border:#dcdcd8;--input:#d6d6d0;--ring:#2458d3;--radius:.25rem}
 @theme inline{--color-background:var(--background);--color-foreground:var(--foreground);--color-card:var(--card);--color-card-foreground:var(--card-foreground);--color-popover:var(--popover);--color-popover-foreground:var(--popover-foreground);--color-primary:var(--primary);--color-primary-foreground:var(--primary-foreground);--color-secondary:var(--secondary);--color-secondary-foreground:var(--secondary-foreground);--color-muted:var(--muted);--color-muted-foreground:var(--muted-foreground);--color-accent:var(--accent);--color-accent-foreground:var(--accent-foreground);--color-destructive:var(--destructive);--color-border:var(--border);--color-input:var(--input);--color-ring:var(--ring);--radius-sm:calc(var(--radius) - 4px);--radius-md:calc(var(--radius) - 2px);--radius-lg:var(--radius);--radius-xl:calc(var(--radius) + 4px);--font-sans:var(--font-inter);--font-serif:var(--font-literata)}
 
 *{box-sizing:border-box}html,body{height:100%}body{margin:0;background:var(--background);color:var(--foreground);font-family:var(--font-inter),system-ui,sans-serif;-webkit-font-smoothing:antialiased}button,input,textarea{font:inherit}button{color:inherit}
@@ -20,7 +20,7 @@
 .count-badge{min-width:16px;padding:1px 5px;border-radius:2px;background:#eae9e6;font-size:.6rem;font-weight:700;color:#888}
 
 .list-search{display:flex;align-items:center;gap:10px;padding:0 14px;height:44px;border:1px solid #dcdcd8;border-radius:2px;background:#eeeee9;margin-bottom:24px}
-.list-search:focus-within{border-color:#999;box-shadow:0 0 0 2px #1d1d1b08}
+.list-search:focus-within{border-color:#999;box-shadow:0 0 0 2px #16161608}
 .list-search svg{width:16px;color:#aaa;flex-shrink:0}
 .list-search input{width:100%;border:0;outline:0;background:transparent;font-size:.9rem}
 .list-search input::placeholder{color:#bbb}
@@ -44,7 +44,7 @@
 .folder-heading:hover .folder-ellipsis{opacity:1}
 .folder-ellipsis:hover{color:#555;background:#e0e0dc}
 .folder-ellipsis svg{width:14px}
-.folder-dropdown{position:absolute;right:0;top:24px;z-index:20;min-width:140px;padding:4px;border:1px solid #e0e0dc;border-radius:2px;background:#f5f5f3;box-shadow:0 6px 24px #1d1d1b10}
+.folder-dropdown{position:absolute;right:0;top:24px;z-index:20;min-width:140px;padding:4px;border:1px solid #e0e0dc;border-radius:2px;background:#f5f5f3;box-shadow:0 6px 24px #16161610}
 .folder-dropdown button{display:flex;align-items:center;gap:8px;width:100%;padding:7px 10px;border:0;border-radius:2px;background:transparent;color:#333;cursor:pointer;font-size:.78rem}
 .folder-dropdown button:hover{background:#f5f5f3}
 .folder-dropdown button.danger{color:#b43e35}
@@ -56,7 +56,7 @@
 .note-table-row{display:grid;grid-template-columns:minmax(0,1fr) 80px 120px 70px;gap:8px;padding:10px 16px;border-bottom:1px solid #f2f2f0;cursor:pointer;transition:background .08s}
 .note-table-row:last-child{border-bottom:0}
 .note-table-row:hover{background:#e6e6e1}
-.note-title-cell{font-size:.88rem;font-weight:500;color:#1d1d1b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-title-cell{font-size:.88rem;font-weight:500;color:#161616;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .note-meta-cell{font-size:.76rem;color:#999;display:flex;align-items:center}
 .note-actions-cell{display:flex;align-items:center;gap:2px;justify-content:flex-end}
 .row-action{display:grid;place-items:center;width:26px;height:26px;border:0;border-radius:2px;background:transparent;color:#ccc;cursor:pointer;opacity:0;transition:opacity .1s}
@@ -71,7 +71,7 @@
 .note-card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 .note-card{padding:16px;border:1px solid #e0e0dc;border-radius:2px;background:#eeeee9;cursor:pointer;transition:background .08s;position:relative}
 .note-card:hover{background:#e6e6e1}
-.note-card-title{font-size:.88rem;font-weight:600;color:#1d1d1b;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.note-card-title{font-size:.88rem;font-weight:600;color:#161616;margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .note-card-preview{font-size:.78rem;color:#777;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:10px;min-height:3.5em}
 .note-card-meta{font-size:.64rem;color:#aaa}
 .note-card-actions{position:absolute;top:8px;right:8px;display:flex;gap:2px;opacity:0;transition:opacity .1s}
@@ -105,7 +105,7 @@
 .editor-body.with-sources{grid-template-columns:minmax(0,1fr) 320px}
 .writing-area{overflow:auto;max-width:740px;width:100%;margin:0 auto;padding:48px 32px 80px}
 .date-display{color:#999;font-size:.82rem;margin-bottom:14px}
-.title-input,.body-input{display:block;width:100%;border:0;outline:0;color:#1d1d1b;background:transparent;font-family:inherit}
+.title-input,.body-input{display:block;width:100%;border:0;outline:0;color:#161616;background:transparent;font-family:inherit}
 .title-input{padding:0;margin-bottom:14px;font-size:2.4rem;font-weight:500;letter-spacing:-.04em;line-height:1.15;resize:none;overflow:hidden;word-wrap:break-word}
 .title-input::placeholder{color:#ccc}
 .format-toolbar{display:flex;align-items:center;gap:2px;padding:4px 6px;margin-bottom:28px;border:1px solid #dcdcd8;border-radius:2px;width:fit-content}
@@ -151,12 +151,12 @@
 .folder-dialog{padding:24px}
 .folder-dialog-label{display:grid;gap:6px;color:#555;font-size:.78rem;font-weight:600}
 .folder-dialog-input{width:100%;padding:9px 10px;border:1px solid #dcdcd8;border-radius:2px;outline:0;background:#fbfbf9;font-size:.85rem}
-.folder-dialog-input:focus{border-color:#999;box-shadow:0 0 0 2px #1d1d1b0a}
+.folder-dialog-input:focus{border-color:#999;box-shadow:0 0 0 2px #1616160a}
 .source-dialog label{display:grid;gap:6px;color:#555;font-size:.78rem;font-weight:600}
 .source-dialog label span{margin-left:3px;color:#aaa;font-weight:400}
 .source-dialog input,.source-dialog textarea{width:100%;padding:9px 10px;border:1px solid #dcdcd8;border-radius:2px;outline:0;background:#fbfbf9;font-size:.84rem}
 .source-dialog textarea{min-height:130px;resize:vertical}
-.source-dialog input:focus,.source-dialog textarea:focus{border-color:#999;box-shadow:0 0 0 2px #1d1d1b0a}
+.source-dialog input:focus,.source-dialog textarea:focus{border-color:#999;box-shadow:0 0 0 2px #1616160a}
 .publish-dialog{padding:28px}
 .publish-dialog [data-slot=dialog-header]{align-items:center;text-align:center}
 .verification-preview{display:grid;margin:6px 0 0;border:1px solid #e0e0dc;border-radius:2px;overflow:hidden}
@@ -176,7 +176,7 @@
 .format-name{font-size:.76rem;font-weight:600;color:#333}
 .format-ext{font-size:.62rem;color:#aaa}
 .format-option.active .format-name{color:#2458d3}
-.paste-toast{position:fixed;z-index:40;right:24px;bottom:20px;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:center;width:min(480px,calc(100vw - 40px));padding:14px 15px;border:1px solid #e0e0dc;border-radius:2px;background:#fff;box-shadow:0 12px 36px #1d1d1b12}
+.paste-toast{position:fixed;z-index:40;right:24px;bottom:20px;display:grid;grid-template-columns:24px minmax(0,1fr) auto;gap:10px;align-items:center;width:min(480px,calc(100vw - 40px));padding:14px 15px;border:1px solid #e0e0dc;border-radius:2px;background:#fff;box-shadow:0 12px 36px #16161612}
 .paste-toast>svg{color:#5a8a5a}
 .paste-toast div{display:grid;gap:2px;font-size:.76rem}
 .paste-toast div span{color:#999}
