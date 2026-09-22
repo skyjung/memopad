@@ -1,20 +1,20 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Archive, ArchiveRestore, BookOpen, Check, ChevronDown, FileText, Folder, FolderPlus, Menu, MoreHorizontal, PanelRightClose, PanelRightOpen, Pencil, Plus, Search, ShieldCheck, Trash2, Type, X } from "lucide-react";
+import { Archive, ArchiveRestore, Bold, BookOpen, Check, ChevronDown, FileText, Folder, FolderPlus, Italic, Menu, MoreHorizontal, PanelRightClose, PanelRightOpen, Pencil, Plus, Search, ShieldCheck, Strikethrough, Trash2, Type, Underline, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 type Source = { id: string; title: string; url: string; excerpt: string };
-type Note = { id: string; folder: string; title: string; subtitle: string; body: string; updatedAt: number; createdAt: number; keystrokes: number; revisions: number; sources: Source[]; archived?: boolean };
+type Note = { id: string; folder: string; title: string; body: string; updatedAt: number; createdAt: number; keystrokes: number; revisions: number; sources: Source[]; archived?: boolean };
 const now = Date.now();
 const seedNotes: Note[] = [
-  { id: "manifesto", folder: "Essays", title: "A small defense of making", subtitle: "", body: "A blank page is not empty. It contains the possibility of a thought becoming language, slowly and imperfectly.\n\nWriting is more than the arrangement of finished sentences. It is hesitation, deletion, return—the private movement by which an idea becomes one's own.\n\nThis page was made without generated language. The sources beside it informed the work, but did not write it.", updatedAt: now, createdAt: now - 432000000, keystrokes: 684, revisions: 17, sources: [
+  { id: "manifesto", folder: "Essays", title: "A small defense of making", body: "A blank page is not empty. It contains the possibility of a thought becoming language, slowly and imperfectly.\n\nWriting is more than the arrangement of finished sentences. It is hesitation, deletion, return—the private movement by which an idea becomes one's own.\n\nThis page was made without generated language. The sources beside it informed the work, but did not write it.", updatedAt: now, createdAt: now - 432000000, keystrokes: 684, revisions: 17, sources: [
     { id: "source-1", title: "The Craft of Thought", url: "https://example.com/craft", excerpt: "Writing is not the transcription of thought, but one of the places in which thought occurs." },
     { id: "source-2", title: "Notebook clipping", url: "", excerpt: "What is lost when the finished object is separated from the record of its making?" },
   ] },
-  { id: "notes-on-looking", folder: "Essays", title: "Notes on looking", subtitle: "", body: "Looking takes time. Recognition is faster, but it is not the same thing.", updatedAt: now - 3120000, createdAt: now - 1036800000, keystrokes: 94, revisions: 4, sources: [] },
-  { id: "fragments", folder: "Fragments", title: "On memory", subtitle: "", body: "Memory edits in silence.", updatedAt: now - 100800000, createdAt: now - 1728000000, keystrokes: 31, revisions: 2, sources: [] },
+  { id: "notes-on-looking", folder: "Essays", title: "Notes on looking", body: "Looking takes time. Recognition is faster, but it is not the same thing.", updatedAt: now - 3120000, createdAt: now - 1036800000, keystrokes: 94, revisions: 4, sources: [] },
+  { id: "fragments", folder: "Fragments", title: "On memory", body: "Memory edits in silence.", updatedAt: now - 100800000, createdAt: now - 1728000000, keystrokes: 31, revisions: 2, sources: [] },
 ];
 const STORAGE_KEY = "memopad-prototype-v1";
 const FONT_KEY = "memopad-font-pref";
@@ -55,7 +55,7 @@ export default function Home() {
     if (saved) try {
       const data = JSON.parse(saved) as { notes: Note[]; selectedId: string };
       if (data.notes?.length) {
-        const migrated = data.notes.map((n: Record<string, unknown>) => ({ subtitle: "", ...n } as Note));
+        const migrated = data.notes.map((n: Record<string, unknown>) => ({ ...n } as Note));
         setNotes(migrated);
         setSelectedId(migrated.some(n => n.id === data.selectedId) ? data.selectedId : migrated[0].id);
       }
@@ -76,9 +76,9 @@ export default function Home() {
   const folders = useMemo(() => Array.from(new Set(displayedNotes.map(n => n.folder))), [displayedNotes]);
   const filtered = useMemo(() => displayedNotes.filter(n => `${n.title} ${n.body}`.toLowerCase().includes(query.toLowerCase())), [displayedNotes, query]);
   const patchNote = (patch: Partial<Note>) => setNotes(current => current.map(n => n.id === selected.id ? { ...n, ...patch } : n));
-  const updateText = (field: "title" | "subtitle" | "body", value: string) => { const prev = selected[field] || ""; const added = Math.max(0, value.length - prev.length); patchNote({ [field]: value, updatedAt: Date.now(), keystrokes: selected.keystrokes + added, revisions: selected.revisions + 1 }); };
+  const updateText = (field: "title" | "body", value: string) => { const prev = selected[field] || ""; const added = Math.max(0, value.length - prev.length); patchNote({ [field]: value, updatedAt: Date.now(), keystrokes: selected.keystrokes + added, revisions: selected.revisions + 1 }); };
   const blockPaste = (event: React.ClipboardEvent) => { event.preventDefault(); setPasteNotice(true); window.setTimeout(() => setPasteNotice(false), 3200); };
-  const createNote = (folder = selected.folder || "Essays") => { const id = crypto.randomUUID(); const note: Note = { id, folder, title: "Untitled", subtitle: "", body: "", createdAt: Date.now(), updatedAt: Date.now(), keystrokes: 0, revisions: 0, sources: [] }; setNotes(current => [note, ...current]); setSelectedId(id); setTab("writing"); setSidebarOpen(false); if (showArchive) setShowArchive(false); };
+  const createNote = (folder = selected.folder || "Essays") => { const id = crypto.randomUUID(); const note: Note = { id, folder, title: "Untitled", body: "", createdAt: Date.now(), updatedAt: Date.now(), keystrokes: 0, revisions: 0, sources: [] }; setNotes(current => [note, ...current]); setSelectedId(id); setTab("writing"); setSidebarOpen(false); if (showArchive) setShowArchive(false); };
   const createFolder = () => { setNewFolderName(""); setNewFolderDialog(true); };
   const confirmCreateFolder = () => { if (newFolderName.trim()) { createNote(newFolderName.trim()); } setNewFolderDialog(false); };
   const addSource = () => { if (!sourceDraft.excerpt.trim() && !sourceDraft.url.trim()) return; patchNote({ sources: [...selected.sources, { ...sourceDraft, id: crypto.randomUUID(), title: sourceDraft.title || "Untitled source" }], updatedAt: Date.now() }); setSourceDraft({ title: "", url: "", excerpt: "" }); setSourceOpen(false); };
@@ -129,6 +129,18 @@ export default function Home() {
   const autoResizeTitle = (el: HTMLTextAreaElement) => { el.style.height = "auto"; el.style.height = el.scrollHeight + "px"; };
   useEffect(() => { if (titleRef.current) autoResizeTitle(titleRef.current); }, [selected.id, selected.title]);
 
+  const applyFormat = (command: string) => { document.execCommand(command, false); };
+  const bodyRef = useRef<HTMLDivElement>(null);
+  const handleBodyInput = () => {
+    if (!bodyRef.current) return;
+    const text = bodyRef.current.innerText;
+    const prev = selected.body || "";
+    const added = Math.max(0, text.length - prev.length);
+    patchNote({ body: text, updatedAt: Date.now(), keystrokes: selected.keystrokes + added, revisions: selected.revisions + 1 });
+  };
+  // Sync contentEditable when switching notes
+  useEffect(() => { if (bodyRef.current && bodyRef.current.innerText !== selected.body) bodyRef.current.innerText = selected.body; }, [selected.id]);
+
   useEffect(() => {
     if (!folderMenu) return;
     const close = () => setFolderMenu(null);
@@ -142,29 +154,27 @@ export default function Home() {
 
   const exportDocument = () => {
     const escape = (value: string) => value.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
-    const subtitleLine = selected.subtitle ? `\n${selected.subtitle}` : "";
     const dateStr = new Date(selected.updatedAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
 
     let blob: Blob;
     let extension: string;
 
     if (exportFormat === "txt") {
-      const text = `${selected.title}${subtitleLine}\n${"=".repeat(selected.title.length)}\n${dateStr}\n\n${selected.body}\n\n---\nWritten in memopad · ${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately\nExported ${new Date().toLocaleDateString()}`;
+      const text = `${selected.title}\n${"=".repeat(selected.title.length)}\n${dateStr}\n\n${selected.body}\n\n---\nWritten in memopad · ${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately\nExported ${new Date().toLocaleDateString()}`;
       blob = new Blob([text], { type: "text/plain" });
       extension = "txt";
     } else if (exportFormat === "md") {
       const sourcesSection = selected.sources.length
         ? `\n\n## Sources\n\n${selected.sources.map((s, i) => `${i + 1}. **${s.title}**${s.url ? ` — [${s.url.replace(/^https?:\/\//, "")}](${s.url})` : ""}\n   > ${s.excerpt}`).join("\n\n")}`
         : "";
-      const md = `# ${selected.title}${selected.subtitle ? `\n\n*${selected.subtitle}*` : ""}\n\n${dateStr}\n\n${selected.body}${sourcesSection}\n\n---\n\n*Written in memopad* · ${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately · Exported ${new Date().toLocaleDateString()}`;
+      const md = `# ${selected.title}\n\n${dateStr}\n\n${selected.body}${sourcesSection}\n\n---\n\n*Written in memopad* · ${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately · Exported ${new Date().toLocaleDateString()}`;
       blob = new Blob([md], { type: "text/markdown" });
       extension = "md";
     } else {
       const paragraphs = selected.body.split(/\n\n+/).map(p => `<p>${escape(p).replace(/\n/g, "<br>")}</p>`).join("");
-      const subtitleHtml = selected.subtitle ? `<p class="subtitle">${escape(selected.subtitle)}</p>` : "";
       const dateHtml = `<p class="date">${escape(dateStr)}</p>`;
       const exportFont = fontPref === "serif" ? "Georgia,serif" : "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
-      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(selected.title)}</title><style>body{max-width:700px;margin:70px auto;padding:0 28px;color:#20201e;font:18px/1.85 ${exportFont}}h1{font-size:46px;line-height:1.1;letter-spacing:-.04em;margin-bottom:8px}.subtitle{color:#666;font-size:22px;font-style:italic;margin:0 0 4px}.date{color:#999;font-size:14px;margin:0 0 32px}.mark{display:flex;align-items:center;gap:12px;margin-top:60px;padding-top:22px;border-top:1px solid #ddd;font:13px/1.4 Arial,sans-serif}.m{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;color:white;background:#BD1B2A;font:bold 18px Georgia}.mark small{display:block;color:#777}.record{margin-top:18px;color:#666;font:12px/1.6 Arial,sans-serif}</style></head><body><h1>${escape(selected.title)}</h1>${subtitleHtml}${dateHtml}${paragraphs}<div class="mark"><span class="m">m</span><div><strong>Written in memopad</strong><small>Composed locally without built-in AI assistance</small></div></div><div class="record">${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately · Exported ${new Date().toLocaleDateString()}</div></body></html>`;
+      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(selected.title)}</title><style>body{max-width:700px;margin:70px auto;padding:0 28px;color:#20201e;font:18px/1.85 ${exportFont}}h1{font-size:46px;line-height:1.1;letter-spacing:-.04em;margin-bottom:8px}.date{color:#999;font-size:14px;margin:0 0 32px}.mark{display:flex;align-items:center;gap:12px;margin-top:60px;padding-top:22px;border-top:1px solid #ddd;font:13px/1.4 Arial,sans-serif}.m{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;color:white;background:#BD1B2A;font:bold 18px Georgia}.mark small{display:block;color:#777}.record{margin-top:18px;color:#666;font:12px/1.6 Arial,sans-serif}</style></head><body><h1>${escape(selected.title)}</h1>${dateHtml}${paragraphs}<div class="mark"><span class="m">m</span><div><strong>Written in memopad</strong><small>Composed locally without built-in AI assistance</small></div></div><div class="record">${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately · Exported ${new Date().toLocaleDateString()}</div></body></html>`;
       blob = new Blob([html], { type: "text/html" });
       extension = "html";
     }
@@ -220,7 +230,7 @@ export default function Home() {
         </div>
         <div className="topbar-actions">
           <span className={`saved-indicator ${justSaved ? "just-saved" : ""}`}><Check /> Saved</span>
-          {tab === "writing" && selected.sources.length > 0 && <button className="topbar-text-button" onClick={() => setSourcesPanelOpen(!sourcesPanelOpen)}><BookOpen /> Sources</button>}
+          {tab === "writing" && <button className="topbar-text-button" onClick={() => setSourcesPanelOpen(!sourcesPanelOpen)}><BookOpen /> Sources{selected.sources.length > 0 && <span className="sources-count">{selected.sources.length}</span>}</button>}
           {tab === "sources" && <button className="topbar-text-button" onClick={() => setTab("writing")}><FileText /> Writing</button>}
           <button className={`font-toggle ${fontPref === "sans" ? "active" : ""}`} onClick={() => setFontPref(fontPref === "serif" ? "sans" : "serif")} aria-label={`Switch to ${fontPref === "serif" ? "sans-serif" : "serif"} font`} title={fontPref === "serif" ? "Switch to sans-serif" : "Switch to serif"}><Type /></button>
           <button className="export-button" onClick={() => { setPublished(false); setExportFormat("html"); setPublishOpen(true); }}>Export</button>
@@ -231,8 +241,13 @@ export default function Home() {
         <div className="writing-area" style={{ fontFamily }}>
           <div className="date-display">{new Date(selected.updatedAt).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</div>
           <textarea ref={titleRef} className="title-input" value={selected.title} onPaste={blockPaste} onChange={e => { updateText("title", e.target.value); autoResizeTitle(e.target); }} onKeyDown={e => { if (e.key === "Enter") e.preventDefault(); }} placeholder="Untitled" aria-label="Document title" rows={1} />
-          <input className="subtitle-input" value={selected.subtitle} onPaste={blockPaste} onChange={e => updateText("subtitle", e.target.value)} placeholder="Subtitle" aria-label="Subtitle" />
-          <textarea className="body-input" value={selected.body} onPaste={blockPaste} onDrop={e => { e.preventDefault(); setPasteNotice(true); }} onChange={e => updateText("body", e.target.value)} placeholder="Begin writing…" spellCheck aria-label="Manuscript" />
+          <div className="format-toolbar">
+            <button onMouseDown={e => { e.preventDefault(); applyFormat("bold"); }} title="Bold" aria-label="Bold"><Bold /></button>
+            <button onMouseDown={e => { e.preventDefault(); applyFormat("italic"); }} title="Italic" aria-label="Italic"><Italic /></button>
+            <button onMouseDown={e => { e.preventDefault(); applyFormat("underline"); }} title="Underline" aria-label="Underline"><Underline /></button>
+            <button onMouseDown={e => { e.preventDefault(); applyFormat("strikethrough"); }} title="Strikethrough" aria-label="Strikethrough"><Strikethrough /></button>
+          </div>
+          <div ref={bodyRef} className="body-input" contentEditable suppressContentEditableWarning onInput={handleBodyInput} onPaste={blockPaste} onDrop={e => { e.preventDefault(); setPasteNotice(true); }} spellCheck data-placeholder="Begin writing…" aria-label="Manuscript" />
           <footer className="writing-footer"><span>{words(selected.body)} words</span><span>{selected.revisions} revisions</span></footer>
         </div>
 
