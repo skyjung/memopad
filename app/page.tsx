@@ -164,7 +164,7 @@ export default function Home() {
       const subtitleHtml = selected.subtitle ? `<p class="subtitle">${escape(selected.subtitle)}</p>` : "";
       const dateHtml = `<p class="date">${escape(dateStr)}</p>`;
       const exportFont = fontPref === "serif" ? "Georgia,serif" : "-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif";
-      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(selected.title)}</title><style>body{max-width:700px;margin:70px auto;padding:0 28px;color:#20201e;font:18px/1.85 ${exportFont}}h1{font-size:46px;line-height:1.1;letter-spacing:-.04em;margin-bottom:8px}.subtitle{color:#666;font-size:22px;font-style:italic;margin:0 0 4px}.date{color:#999;font-size:14px;margin:0 0 32px}.mark{display:flex;align-items:center;gap:12px;margin-top:60px;padding-top:22px;border-top:1px solid #ddd;font:13px/1.4 Arial,sans-serif}.m{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;color:white;background:#2458d3;font:bold 18px Georgia}.mark small{display:block;color:#777}.record{margin-top:18px;color:#666;font:12px/1.6 Arial,sans-serif}</style></head><body><h1>${escape(selected.title)}</h1>${subtitleHtml}${dateHtml}${paragraphs}<div class="mark"><span class="m">m</span><div><strong>Written in memopad</strong><small>Composed locally without built-in AI assistance</small></div></div><div class="record">${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately · Exported ${new Date().toLocaleDateString()}</div></body></html>`;
+      const html = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><title>${escape(selected.title)}</title><style>body{max-width:700px;margin:70px auto;padding:0 28px;color:#20201e;font:18px/1.85 ${exportFont}}h1{font-size:46px;line-height:1.1;letter-spacing:-.04em;margin-bottom:8px}.subtitle{color:#666;font-size:22px;font-style:italic;margin:0 0 4px}.date{color:#999;font-size:14px;margin:0 0 32px}.mark{display:flex;align-items:center;gap:12px;margin-top:60px;padding-top:22px;border-top:1px solid #ddd;font:13px/1.4 Arial,sans-serif}.m{display:grid;place-items:center;width:30px;height:30px;border-radius:7px;color:white;background:#BD1B2A;font:bold 18px Georgia}.mark small{display:block;color:#777}.record{margin-top:18px;color:#666;font:12px/1.6 Arial,sans-serif}</style></head><body><h1>${escape(selected.title)}</h1>${subtitleHtml}${dateHtml}${paragraphs}<div class="mark"><span class="m">m</span><div><strong>Written in memopad</strong><small>Composed locally without built-in AI assistance</small></div></div><div class="record">${words(selected.body)} words · ${selected.revisions} recorded revisions · ${selected.sources.length} sources stored separately · Exported ${new Date().toLocaleDateString()}</div></body></html>`;
       blob = new Blob([html], { type: "text/html" });
       extension = "html";
     }
@@ -214,22 +214,26 @@ export default function Home() {
     </aside>
 
     <section className={`workspace ${sourcesPanelOpen && tab === "writing" ? "with-sources-panel" : ""}`}>
-      <header className="topbar"><div className="topbar-left"><button className="icon-button mobile-only" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar"><Menu /></button><div className="document-location"><Folder /> {selected.folder} <span>/</span> {selected.title || "Untitled"}{selected.archived && <span className="archived-badge">Archived</span>}</div></div><div className="topbar-actions"><span className={`saved-indicator ${justSaved ? "just-saved" : ""}`}><Check /> Saved</span>
-        {tab === "writing" && selected.sources.length > 0 && <Button variant="ghost" size="icon" onClick={() => setSourcesPanelOpen(!sourcesPanelOpen)} aria-label={sourcesPanelOpen ? "Hide sources panel" : "Show sources panel"} title={sourcesPanelOpen ? "Hide sources" : "Show sources"}>{sourcesPanelOpen ? <PanelRightClose /> : <PanelRightOpen />}</Button>}
-        <button className={`font-toggle ${fontPref === "sans" ? "active" : ""}`} onClick={() => setFontPref(fontPref === "serif" ? "sans" : "serif")} aria-label={`Switch to ${fontPref === "serif" ? "sans-serif" : "serif"} font`} title={fontPref === "serif" ? "Switch to sans-serif" : "Switch to serif"}><Type /><span>{fontPref === "serif" ? "Serif" : "Sans"}</span></button>
-        <Button className="publish-button" onClick={() => { setPublished(false); setExportFormat("html"); setPublishOpen(true); }}><ShieldCheck /> Export</Button></div></header>
-      <div className="document-tabs" role="tablist" aria-label="Document sections"><button className={tab === "writing" ? "active" : ""} onClick={() => setTab("writing")} role="tab"><FileText /> Writing</button><button className={tab === "sources" ? "active" : ""} onClick={() => setTab("sources")} role="tab"><BookOpen /> Sources <span>{selected.sources.length}</span></button></div>
+      <header className="topbar">
+        <div className="topbar-left">
+          <button className="icon-button mobile-only" onClick={() => setSidebarOpen(true)} aria-label="Open sidebar"><Menu /></button>
+        </div>
+        <div className="topbar-actions">
+          <span className={`saved-indicator ${justSaved ? "just-saved" : ""}`}><Check /> Saved</span>
+          {tab === "writing" && selected.sources.length > 0 && <button className="topbar-text-button" onClick={() => setSourcesPanelOpen(!sourcesPanelOpen)}><BookOpen /> Sources</button>}
+          {tab === "sources" && <button className="topbar-text-button" onClick={() => setTab("writing")}><FileText /> Writing</button>}
+          <button className={`font-toggle ${fontPref === "sans" ? "active" : ""}`} onClick={() => setFontPref(fontPref === "serif" ? "sans" : "serif")} aria-label={`Switch to ${fontPref === "serif" ? "sans-serif" : "serif"} font`} title={fontPref === "serif" ? "Switch to sans-serif" : "Switch to serif"}><Type /></button>
+          <button className="export-button" onClick={() => { setPublished(false); setExportFormat("html"); setPublishOpen(true); }}>Export</button>
+        </div>
+      </header>
 
       {tab === "writing" ? <div className={`writing-view ${sourcesPanelOpen ? "with-panel" : ""}`}>
-        <div className="writing-area">
-          <div className="writing-status"><span><ShieldCheck /> Verified composition</span><span>Paste disabled</span></div>
-          <article className="page" style={{ fontFamily }}>
-            <textarea ref={titleRef} className="title-input" value={selected.title} onPaste={blockPaste} onChange={e => { updateText("title", e.target.value); autoResizeTitle(e.target); }} onKeyDown={e => { if (e.key === "Enter") e.preventDefault(); }} placeholder="Untitled" aria-label="Document title" rows={1} />
-            <input className="subtitle-input" value={selected.subtitle} onPaste={blockPaste} onChange={e => updateText("subtitle", e.target.value)} placeholder="Subtitle" aria-label="Subtitle" />
-            <div className="date-display">{new Date(selected.updatedAt).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</div>
-            <textarea className="body-input" value={selected.body} onPaste={blockPaste} onDrop={e => { e.preventDefault(); setPasteNotice(true); }} onChange={e => updateText("body", e.target.value)} placeholder="Begin writing…" spellCheck aria-label="Manuscript" style={{ fontFamily }} />
-          </article>
-          <footer className="writing-footer"><span>{words(selected.body)} words</span><span>{selected.revisions} revisions</span><span>Started {new Date(selected.createdAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span></footer>
+        <div className="writing-area" style={{ fontFamily }}>
+          <div className="date-display">{new Date(selected.updatedAt).toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}</div>
+          <textarea ref={titleRef} className="title-input" value={selected.title} onPaste={blockPaste} onChange={e => { updateText("title", e.target.value); autoResizeTitle(e.target); }} onKeyDown={e => { if (e.key === "Enter") e.preventDefault(); }} placeholder="Untitled" aria-label="Document title" rows={1} />
+          <input className="subtitle-input" value={selected.subtitle} onPaste={blockPaste} onChange={e => updateText("subtitle", e.target.value)} placeholder="Subtitle" aria-label="Subtitle" />
+          <textarea className="body-input" value={selected.body} onPaste={blockPaste} onDrop={e => { e.preventDefault(); setPasteNotice(true); }} onChange={e => updateText("body", e.target.value)} placeholder="Begin writing…" spellCheck aria-label="Manuscript" />
+          <footer className="writing-footer"><span>{words(selected.body)} words</span><span>{selected.revisions} revisions</span></footer>
         </div>
 
         {sourcesPanelOpen && <aside className="sources-sidebar">
